@@ -6,115 +6,92 @@ val NumVisibleRings = 4
 val NumColumns = 12
 val SolutionColumnSum = 42
 
-val Rotations = 
-  for (
+// Build the cartesian product of all possible wheel rotations
+// Note that we can consider any of the wheels fixed and just rotate the other wheels
+// A wheel can be rotated anywhere from 0 steps to 1 less than the total number of wheel positions
+val Rotations = for (
     topRotation <- (0 until NumColumns);
     secondRotation <- (0 until NumColumns);
     thirdRotation <- (0 until NumColumns);
     fourthRotation <- (0 until NumColumns)
   ) yield Seq(topRotation, secondRotation, thirdRotation, fourthRotation, 0)
 
-@main def hello(): Unit =
-  println(s"Exploring ${Rotations.size} potential solutions")
-  Rotations.map(applyRotation(_, Wheels)).find(isSolution).foreach(printWheelState)
-
-def applyRotation(rotations: Seq[Int], wheels: Seq[Wheel]) =
-  rotations.zip(wheels).map(p => p._2.drop(p._1).take(NumColumns))
-
-def isSolution(wheelState: Seq[Wheel]) =
-  val evaluation = (0 until NumColumns)
-    .map(colIndex => (0 until NumWheels).map(wheelIndex => wheelState.drop(wheelIndex).head.drop(colIndex).head))
-    .map(resolveColumns)
-    .map(_.sum)
-
-  evaluation
-    .find(_ != SolutionColumnSum)
-    .isEmpty
-
-def printWheelState(wheels: Seq[Wheel]) =
-  wheels.foreach(x =>
-    println("*****************")
-    println(x)
-  )
-
-def printColumnState(column: Column) =
-  println("*****************")
-  println(column)
-
-// Seq of "columns"
-def resolveColumns(columns: Seq[Column]): Seq[Int] =
-  // println("Resolving Columns")
-  // columns.foreach(printColumnState)
-  val correlatedColumns = (0 until NumVisibleRings).map(index => columns.map(column => column.drop(index).head))
-  // println(correlatedColumns)
-  val resolved = correlatedColumns.map(_.find(_.isDefined).flatten.get)
-  // println(resolved)
-  resolved
-
-val TopWheel: Wheel = Seq(    Seq(None    , None    , None    , Some( 3)),
-                              Seq(None    , None    , None    , None    ),
-                              Seq(None    , None    , None    , Some( 6)),
-                              Seq(None    , None    , None    , None    ),
-                              Seq(None    , None    , None    , Some(10)),
-                              Seq(None    , None    , None    , None    ),
-                              Seq(None    , None    , None    , Some( 7)),
-                              Seq(None    , None    , None    , None    ),
-                              Seq(None    , None    , None    , Some(15)),
-                              Seq(None    , None    , None    , None    ),
-                              Seq(None    , None    , None    , Some( 8)),
-                              Seq(None    , None    , None    , None    ))
-
-val SecondWheel: Wheel = Seq( Seq(None    , None    , Some( 7), None    ),
-                              Seq(None    , None    , Some(15), Some( 6)),
-                              Seq(None    , None    , None    , None    ),
-                              Seq(None    , None    , None    , Some(11)),
-                              Seq(None    , None    , Some(14), Some(11)),
-                              Seq(None    , None    , None    , Some( 6)),
-                              Seq(None    , None    , Some( 9), Some(11)),
-                              Seq(None    , None    , None    , None    ),
-                              Seq(None    , None    , Some(12), Some( 6)),
-                              Seq(None    , None    , None    , Some(17)),
-                              Seq(None    , None    , Some( 4), Some( 7)),
-                              Seq(None    , None    , None    , Some( 3)))
-
-val MiddleWheel: Wheel = Seq( Seq(None    , Some( 5), Some(21), Some( 9)),
-                              Seq(None    , None    , Some( 6), Some(13)),
-                              Seq(None    , Some(10), Some(15), Some( 9)),
-                              Seq(None    , None    , Some( 4), Some( 7)),
-                              Seq(None    , Some( 8), Some( 9), Some(13)),
-                              Seq(None    , None    , Some(18), Some(21)),
-                              Seq(None    , Some(22), Some(11), Some(17)),
-                              Seq(None    , None    , Some(26), Some( 4)),
-                              Seq(None    , Some(16), Some(14), Some( 5)),
-                              Seq(None    , None    , Some( 1), None    ),
-                              Seq(None    , Some( 9), Some(12), Some( 7)),
-                              Seq(None    , None    , None    , Some( 8)))
-
-val FourthWheel: Wheel = Seq( Seq(Some( 6), Some( 9), Some(14), Some(14)),
-                              Seq(None    , None    , Some(12), None    ),
-                              Seq(Some(10), Some(17), Some( 3), Some(11)),
-                              Seq(None    , Some(19), Some( 8), Some(11)),
-                              Seq(Some(10), Some( 3), Some( 9), Some(14)),
-                              Seq(None    , Some(12), None    , Some(11)),
-                              Seq(Some( 1), Some( 3), Some( 9), Some(14)),
-                              Seq(None    , Some(26), Some(20), Some(11)),
-                              Seq(Some( 9), Some( 6), Some(12), Some(14)),
-                              Seq(None    , None    , Some( 3), Some(14)),
-                              Seq(Some(12), Some( 2), Some( 6), Some(11)),
-                              Seq(None    , Some(13), None    , Some(14)))
-
-val BottomWheel: Wheel = Seq( Seq(Some( 8), Some( 9), Some(15), Some(14)),
-                              Seq(Some( 8), Some( 4), Some( 4), Some(11)),
-                              Seq(Some( 3), Some( 4), Some( 5), Some(11)),
-                              Seq(Some( 4), Some( 6), Some( 6), Some(14)),
-                              Seq(Some(12), Some( 6), Some( 7), Some(11)),
-                              Seq(Some( 2), Some( 3), Some( 8), Some(14)),
-                              Seq(Some( 5), Some( 3), Some( 9), Some(11)),
-                              Seq(Some(10), Some(14), Some(10), Some(14)),
-                              Seq(Some( 7), Some(14), Some(11), Some(14)),
-                              Seq(Some(16), Some(21), Some(12), Some(11)),
-                              Seq(Some( 8), Some(21), Some(13), Some(14)),
-                              Seq(Some( 7), Some( 9), Some(14), Some(11)))
-
 // Represent each wheel as two copies of itself, so we can represent rotation with wheel.drop(rotation).take(NumColumns)
 val Wheels: Seq[Wheel] = Seq(TopWheel, SecondWheel, MiddleWheel, FourthWheel, BottomWheel).map(l => l ++ l)
+
+// Taking a set of wheel rotations and a wheel state, rotate each of the wheels as indicated
+// by the correlated rotation value.
+//
+// We expect these two sequences to be exactly the same length, and the Nth rotation is applied
+// to the Nth wheel state.
+//
+// Note that this routine assumes that the wheel state contains double entries for each wheel
+// so that 12 sequential values are guaranteed to remain after dropping initial values to indicate the rotation
+// 
+// Returns the updated wheel state
+def applyRotation(rotations: Seq[Int], wheelState: Seq[Wheel]): Seq[Wheel] =
+  rotations
+    .zip(wheelState)
+    .map(p => p._2.drop(p._1).take(NumColumns))
+
+// Given a wheel state, extract the correlated columns based on where the wheels line up with each other
+// Expect to have 12 entries in the top-level returned structure (one for each column) and 5 entries for each of
+// the second level structures (one for each wheel)
+def retrieveCorrelatedColumns(wheelState: Seq[Wheel]): Seq[Seq[Column]] =
+  (0 until NumColumns)
+    .map(colIndex => (0 until NumWheels).map(wheelIndex => wheelState.drop(wheelIndex).head.drop(colIndex).head))
+
+// Given a set of "columns" that correspond to a set of stacked wheels, evaluate the effective numbers
+// when looking "down" at the puzzle. Each column on a wheel can represent gaps in the wheel with a "None"
+// and this method stacks the correlated values in a list (with the topmost wheel first, then descending wheels
+// in order), then finds the first visible value in that stack for each row.
+def resolveColumns(columns: Seq[Column]): Seq[Int] =
+  (0 until NumVisibleRings)
+    .map(index => columns.map(column => column.drop(index).head))
+    .map(_.find(_.isDefined).flatten.get)
+
+// Given a wheel state, determine if this result is a valid solution. This is done by:
+// 1. Grouping the overlapping wheel columns together
+// 2. Resolving those columns to determine what numbers are actually visible when looking down upon the puzzle
+// 3. Adding up the number in each column
+// 4. Looking to see if there are any columns that do NOT add up to the desired solution value
+//
+// If there are no such columns in step 4, then it is a valid solution
+def isSolution(wheelState: Seq[Wheel]): Boolean =
+    retrieveCorrelatedColumns(wheelState)
+      .map(resolveColumns)
+      .map(_.sum)
+      .find(_ != SolutionColumnSum)
+      .isEmpty
+
+// Displays a wheel state, as seen from the top looking down on the puzzle
+// Each row is a single column, from the outside to the inside
+// 
+// In this form of the display, it's not clear which wheel is contributing each
+// number, so you may have to play around with it a little bit to get things
+// aligned correctly.
+//
+// You can always "println" the whole wheel state, and you will see exactly what
+// is what, but I found it easier to reproduce the state in the physical puzzle
+// With this format.
+def display(wheelState: Seq[Wheel]): Unit =
+  retrieveCorrelatedColumns(wheelState)
+    .map(resolveColumns)
+    .foreach(col =>
+      col.foreach(num =>
+        if (num < 10) print(" ")
+        print(num)
+        print(" ")
+      )
+      println
+    )
+    
+// Solve the puzzle by:
+// 1. Getting a sequence of all possible rotations
+// 2. Applying those rotations to the base wheel state to determine all possible wheel states
+// 3. Find the first solution out of the possible wheel states (there should be only one)
+@main def hello(): Unit =
+  Rotations
+    .map(applyRotation(_, Wheels))
+    .find(isSolution)
+    .foreach(display)

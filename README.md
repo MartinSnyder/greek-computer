@@ -1,8 +1,3 @@
-## sbt project compiled with Scala 3
+This is a scala program to solve the [Project Genius Grecian Computer Mechanical Math Puzzle][product-listing] written in Scala 3.
 
-### Usage
-
-This is a normal sbt project. You can compile code with `sbt compile`, run it with `sbt run`, and `sbt console` will start a Scala 3 REPL.
-
-For more information on the sbt-dotty plugin, see the
-[scala3-example-project](https://github.com/scala/scala3-example-project/blob/main/README.md).
+[product-listing]: https://www.amazon.com/True-Genius-Grecian-Computer/dp/B08469GT8K
